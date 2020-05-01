@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require_relative '../lib/strava_club_activities/strava_api'
+require_relative '../lib/strava_club_activities/parser'
+require 'logger'
+require 'json'
+require 'optimist'
+
+opts = Optimist.options do
+  opt :access_token, 'Strava access token', required: true, default: ''
+  opt :filter, 'Description to filter by (case-insensitive)', default: ''
+  opt :club_id, 'Strava club ID', default: '25174'
+end
+
+filename = 'club_activities.csv'
+logger = Logger.new($stdout)
+api = StravaApi.new(opts[:access_token], opts[:club_id])
+logger.info 'Calling get_club_activities'
+data = api.get_club_activities
+logger.info "Received status code #{data.code} from get_club_activities request"
+# logger.info data
+if data.code >= 300
+  logger.error 'Request failed!'
+  logger.error data
+end
+logger.info "Generating CSV to #{filename}..."
+parser = Parser.new(logger, JSON.parse(data.body), opts[:filter])
+parser.parse
+parser.to_csv(filename)
+logger.info 'Done!'
