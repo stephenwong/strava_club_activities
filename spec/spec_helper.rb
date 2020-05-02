@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+
+SimpleCov.root(File.expand_path('..', __dir__))
+SimpleCov.formatters = [
+  SimpleCov::Formatter::HTMLFormatter
+]
+
+SimpleCov.root 'lib'
+SimpleCov.coverage_dir '../coverage'
+SimpleCov.start do
+  add_filter '/.bundle/'
+end
+
 require 'bundler/setup'
 require 'strava_club_activities'
 

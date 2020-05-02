@@ -1,0 +1,80 @@
+# file: .rubocop.yml
+require:
+  - rubocop-performance  # Need to add gem in gemfile
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.5
+  # Reason: Important for frozen string comment but might need to drop this to 2.3 depending on that actual JRuby version
+  Exclude:
+    - 'tmp/**/*'
+
+Style/NumericLiteralPrefix:
+  EnforcedOctalStyle: zero_only
+  # Reason: Unnecessarily turns 01234 into 0o1234 when using rubocop autocorrect
+  # Below are options set to false because they are too strict and too many occurrences happen
+
+Layout/LineLength:
+  Max: 120
+  # Reason: Enough for split screen @ 1920p resolution but open to interpretation
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/BeforeAfterAll:
+  Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true

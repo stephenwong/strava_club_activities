@@ -7,6 +7,12 @@ gemspec
 
 gem 'httparty', '~> 0.13.7'
 gem 'optimist', '~> 3'
-gem 'rake', '~> 12.0'
-gem 'rspec', '~> 3.0'
-gem 'rubocop', '~> 0.81.0'
+
+group :development, :test do
+  gem 'rake', '~> 12.0'
+  gem 'rspec', '~> 3.0'
+  gem 'rubocop'
+  gem 'rubocop-performance'
+  gem 'rubocop-rspec'
+  gem 'simplecov'
+end

@@ -16,7 +16,7 @@ end
 
 filename = 'club_activities.csv'
 logger = Logger.new($stdout)
-api = StravaApi.new(opts[:access_token], opts[:club_id])
+api = StravaClubActivities::StravaApi.new(opts[:access_token], opts[:club_id])
 logger.info 'Calling get_club_activities'
 data = api.get_club_activities
 logger.info "Received status code #{data.code} from get_club_activities request"
@@ -26,7 +26,7 @@ if data.code >= 300
   logger.error data
 end
 logger.info "Generating CSV to #{filename}..."
-parser = Parser.new(logger, JSON.parse(data.body), opts[:filter])
+parser = StravaClubActivities::Parser.new(logger, JSON.parse(data.body), opts[:filter])
 parser.parse
 parser.to_csv(filename)
 logger.info 'Done!'
