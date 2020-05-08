@@ -7,11 +7,34 @@ Running it locally can be done like this:
 ```
 bundle exec ruby bin/club_activities -h
 
+----------------------------------
+      Strava Club Activities
+----------------------------------
+This app is designed to pull back data from Strava's API and dump it in a CSV.
+There are two modes: 'segment' and 'club'
+
+Club mode: Pull down all the activities done by athletes in the club for that day.
+           Filter parameter will be searching the run title.
+           WARNING: This is based on who you follow. If others have set their profile to private and you
+                    do not have them added then they will not appear!
+
+Segment mode: Pull down the best activity performed by club athletes for that day in the segment specified.
+              You MUST have this segment starred otherwise segment will not be found.
+              Filter parameter will be searching for the segment name.
+
+Usage examples:
+       club_activities --mode segment --access-token <token> --filter <segment_name>
+       club_activities --mode club --access-token <token> --filter <run_title>
+
 Options:
-  -a, --access-token=<s>    Strava access token (default: )
-  -f, --filter=<s>          Description to filter by (case-insensitive) (default: )
-  -c, --club-id=<s>         Strava club ID (default: 25174)
+  -m, --mode=<s>            Values: segment/club, Process either club activities or the segment activities
+  -a, --access-token=<s>    Strava access token
+  -f, --filter=<s>          Description to filter by (case-insensitive). Filters run name in club mode. Filters Segment name in segment mode.
+                            (Default: )
+  -i, --filename=<s>        Filename of the output CSV file (optional)
+  -c, --club-id=<i>         Strava club ID (default: 25174)
   -h, --help                Show this message
+
 ```
 
 ```
@@ -34,7 +57,7 @@ In windows do the following:
 3. club_activities.exe will be generated and is self sufficient with all dependencies packed up
 4. run as per instructions above like this
     ```shell
-    club_activities.exe -a <access_token> -f <filter_text>
+    club_activities.exe -m <mode> -a <access_token> -f <filter_text>
     ```
 
 ## Development

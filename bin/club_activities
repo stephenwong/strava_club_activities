@@ -3,30 +3,51 @@
 # frozen_string_literal: true
 
 require_relative '../lib/strava_club_activities/strava_api'
-require_relative '../lib/strava_club_activities/parser'
+require_relative '../lib/strava_club_activities/processor/club_race'
+require_relative '../lib/strava_club_activities/processor/segment_race'
 require 'logger'
 require 'json'
 require 'optimist'
 
 opts = Optimist.options do
-  opt :access_token, 'Strava access token', required: true, default: ''
-  opt :filter, 'Description to filter by (case-insensitive)', default: ''
-  opt :club_id, 'Strava club ID', default: '25174'
+  banner <<~README
+    ----------------------------------
+          Strava Club Activities
+    ----------------------------------
+    This app is designed to pull back data from Strava's API and dump it in a CSV.
+    There are two modes: 'segment' and 'club'
+
+    Club mode: Pull down all the activities done by athletes in the club for that day.
+               Filter parameter will be searching the run title.
+               WARNING: This is based on who you follow. If others have set their profile to private and you
+                        do not have them added then they will not appear!
+
+    Segment mode: Pull down the best activity performed by club athletes for that day in the segment specified.
+                  You MUST have this segment starred otherwise segment will not be found.
+                  Filter parameter will be searching for the segment name.
+
+    Usage examples:
+           club_activities.exe --mode segment --access-token <token> --filter <segment_name>
+           club_activities.exe --mode club --access-token <token> --filter <run_title>
+
+    where [options] are:
+  README
+  opt :mode, 'Values: segment/club, Process either club activities or the segment activities', required: true, type: :string
+  opt :access_token, 'Strava access token', required: true, type: :string
+  opt :filter, 'Description to filter by (case-insensitive). Filters run name in club mode. Filters Segment name in segment mode.', type: :string, default: ''
+  opt :filename, 'Filename of the output CSV file (optional)', type: :string
+  opt :club_id, 'Strava club ID', type: :integer, default: 25_174
 end
 
-filename = 'club_activities.csv'
 logger = Logger.new($stdout)
-api = StravaClubActivities::StravaApi.new(opts[:access_token], opts[:club_id])
-logger.info 'Calling get_club_activities'
-data = api.get_club_activities
-logger.info "Received status code #{data.code} from get_club_activities request"
-# logger.info data
-if data.code >= 300
-  logger.error 'Request failed!'
-  logger.error data
+api = StravaClubActivities::StravaApi.new(logger, opts[:access_token], opts[:club_id])
+case opts[:mode]
+when 'club'
+  processor = StravaClubActivities::Processor::ClubRace.new(logger, api, opts[:filter], opts[:filename])
+when 'segment'
+  processor = StravaClubActivities::Processor::SegmentRace.new(logger, api, opts[:filter], opts[:filename])
+else
+  raise ArgumentError, "Invalid mode. Use only 'segment' or 'club'"
 end
-logger.info "Generating CSV to #{filename}..."
-parser = StravaClubActivities::Parser.new(logger, JSON.parse(data.body), opts[:filter])
-parser.parse
-parser.to_csv(filename)
-logger.info 'Done!'
+
+processor.process
