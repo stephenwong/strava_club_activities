@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in strava_club_activities.gemspec
 gemspec
 
-gem 'httparty', '~> 0.13.7'
+gem 'httparty', '~> 0.21.0'
 gem 'optimist', '~> 3'
 
 group :development, :test do
